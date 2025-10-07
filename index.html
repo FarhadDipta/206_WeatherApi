@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -109,7 +109,8 @@
   </style>
 </head>
 <body>
-   <div class="container">
+
+  <div class="container">
     <h2>🌤️ Info Cuaca</h2>
 
     <div class="input-group">
@@ -119,5 +120,56 @@
 
     <div id="hasil" class="hasil">
       <div id="iconCuaca" style="text-align:center;"></div>
+
+      <p class="judul">Cuaca</p>
+      <p class="data-row">Suhu: <span id="suhu">-</span> °C</p>
+      <p class="data-row">Kelembapan: <span id="kelembapan">-</span> %</p>
+      <p class="data-row">Kondisi: <span id="kondisi">-</span></p>
+
+      <p class="judul">Lokasi</p>
+      <p class="data-row">Negara: <span id="negara">-</span></p>
+      <p class="data-row">Provinsi: <span id="provinsi">-</span></p>
+      <p class="data-row">Kota: <span id="kecamatan">-</span></p>
+      <p class="data-row">Longitude: <span id="lon">-</span></p>
+      <p class="data-row">Latitude: <span id="lat">-</span></p>
+    </div>
+  </div>
+
+  <script>
+    $("#getBtn").click(function () {
+      const lokasi = $("#lokasiInput").val().trim();
+      if (lokasi === "") {
+        alert("Masukkan nama kota terlebih dahulu!");
+        return;
+      }
+
+      const urlapi = `https://api.weatherapi.com/v1/current.json?key=2b0cb3b513b1479885f30950250710&q=${lokasi}&aqi=no`;
+
+      $.ajax({
+        url: urlapi,
+        method: "GET",
+        success: function (data) {
+          console.log(data);
+          $("#hasil").addClass("fade-in");
+
+          $("#suhu").text(data.current.temp_c);
+          $("#kelembapan").text(data.current.humidity);
+          $("#kondisi").text(data.current.condition.text);
+          $("#negara").text(data.location.country);
+          $("#provinsi").text(data.location.region);
+          $("#kecamatan").text(data.location.name);
+          $("#lon").text(data.location.lon);
+          $("#lat").text(data.location.lat);
+
+          const iconUrl = "https:" + data.current.condition.icon;
+          $("#iconCuaca").html(`<img src="${iconUrl}" class="weather-icon" alt="icon cuaca">`);
+        },
+        error: function () {
+          alert("Lokasi tidak ditemukan atau terjadi kesalahan!");
+        },
+      });
+    });
+  </script>
+
 </body>
 </html>
